@@ -1,16 +1,38 @@
 'use client'
 import { Layout } from '@/components/layout/admin'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { Input, FeiId, ImageCard, Textarea, ImageUpload, Button } from '@/app/use-client'
 import { ImageCreate } from '@/app/actions/admin/image_actions'
 import SubmitButton from './SubmitButton'
+import { z } from 'zod'
 
 function page() {
 
+    const [errors, updateErrors] = useState<z.ZodIssue[]>([]);
+
+    const errorItem = useCallback((name: string) => {
+        return errors.find(item => item.path[0] === name);
+    }, [errors])
+
+    const errorMessage = useCallback((name: string) => {
+        return errorItem(name)?.message;
+    }, [errorItem]);
+
+    const errorState = useCallback((name: string) => {
+        return errorItem(name) ? "error" : "none";
+    }, [errorItem]);
+
+    const onSubmit = async (formData: FormData) => {
+        const { errors } = await ImageCreate(formData)
+        updateErrors(errors!);
+    }
+
     return (
         <Layout>
-            <form className='!w-full' action={ImageCreate}>
-                <FeiId label={'图集名称'}>
+            <form className='!w-full' action={onSubmit}>
+                <FeiId label={'图集名称'}
+                    validationState={errorState('name')}
+                    validationMessage={errorMessage('name')}>
                     <Input id={'name'} name='name' type='text' placeholder='图集名称' />
                 </FeiId>
 
@@ -26,7 +48,7 @@ function page() {
                     <ImageUpload name='images' />
                 </FeiId>
                 <FeiId>
-                  <SubmitButton />
+                    <SubmitButton />
                 </FeiId>
             </form>
         </Layout >
