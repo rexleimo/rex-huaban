@@ -9,15 +9,26 @@ function ImageUpload(props: {
     const inputRef = useRef<HTMLInputElement>()
 
     const handleUpload = (e: Event) => {
-        const file = (e.target as HTMLInputElement).files![0]
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => {
-            updateList(list => [...list, reader.result as string])
-            setTimeout(() => {
-                inputRef.current?.remove()
-            }, 0);
-        }
+        const file = (e.target as HTMLInputElement).files![0];
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('/api/upload', {
+            method: "POST",
+            body: formData
+        }).then(res => res.json())
+            .then(json => {
+                updateList(list => [...list, json.file])
+            })
+
+        // const reader = new FileReader()
+        // reader.readAsDataURL(file)
+        // reader.onload = () => {
+
+        //     
+        //     setTimeout(() => {
+        //         inputRef.current?.remove()
+        //     }, 0);
+        // }
     }
 
     const handleCreate = () => {

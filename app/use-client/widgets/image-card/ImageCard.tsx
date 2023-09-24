@@ -3,6 +3,7 @@ import React from 'react'
 import { Card, CardPreview, CardHeader, makeStyles, shorthands, tokens, Text, Caption1 } from '@fluentui/react-components'
 import { Button } from '@/app/use-client'
 import { MoreHorizontal20Regular } from "@fluentui/react-icons";
+import Image from 'next/image'
 
 const useStyles = makeStyles({
     main: {
@@ -64,9 +65,11 @@ function ImageCard(porps: ImageCardProps) {
                     />
                 }
             >
-                <img
+                <Image
                     className={styles.smallRadius}
-                    src={porps.uri}
+                    width={520}
+                    height={520}
+                    src={porps.uri as string}
                     alt="Presentation Preview"
                 />
             </CardPreview>
